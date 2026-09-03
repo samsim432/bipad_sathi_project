@@ -119,7 +119,9 @@ class HomeScreen extends StatelessWidget {
                 ],
               ),
             ),
+
             const SizedBox(height: 18),
+
             // Action Grid
             GridView.count(
               crossAxisCount: 3,
@@ -179,7 +181,9 @@ class HomeScreen extends StatelessWidget {
                 ),
               ],
             ),
+
             const SizedBox(height: 18),
+
             // Safe Button
             ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
@@ -206,7 +210,9 @@ class HomeScreen extends StatelessWidget {
                 );
               },
             ),
+
             const SizedBox(height: 20),
+
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -220,6 +226,7 @@ class HomeScreen extends StatelessWidget {
                 )
               ],
             ),
+
             Card(
               child: ListTile(
                 leading: CircleAvatar(
@@ -234,13 +241,6 @@ class HomeScreen extends StatelessWidget {
             ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: Colors.red.shade600,
-        elevation: 4,
-        icon: const Icon(Icons.emergency, color: Colors.white),
-        label: const Text('SOS', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
-        onPressed: () => _openSOSModal(context, isNe),
       ),
     );
   }
