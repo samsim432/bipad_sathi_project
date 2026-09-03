@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  # Spatial Database with PostGIS
+  bipad-postgres:
+    image: postgis/postgis:15-3.3-alpine
+    container_name: bipad_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: bipad_admin
+      POSTGRES_PASSWORD: disaster_secret_pass
+      POSTGRES_DB: bipad_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # In-Memory Cache for Real-time SOS & Live Coordinates
+  bipad-redis:
+    image: redis:7-alpine
+    container_name: bipad_redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+volumes:
+  postgres_data:
+  redis_data:

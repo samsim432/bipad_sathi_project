@@ -1,0 +1,23 @@
+{
+  "@@locale": "en",
+  "appTitle": "Bipad Sathi",
+  "highRiskAlert": "HIGH RISK WARNING!",
+  "highRiskSub": "High flood risk detected in your area. Move to safe high ground.",
+  "viewDetails": "View Details",
+  "sosButton": "SOS",
+  "sosNeedRescue": "I Need Rescue",
+  "sosSubtitle": "Your precise details will be sent to nearby rescue teams.",
+  "peopleCount": "Number of People",
+  "children": "Children",
+  "elderly": "Elderly",
+  "specialNeeds": "Special Needs / Injured",
+  "sendSOS": "Send SOS Emergency Alert",
+  "iAmSafe": "I Am Safe",
+  "safeNotificationSent": "Safe status sent to your family!",
+  "map": "Disaster Map",
+  "reportHazard": "Report Hazard",
+  "roadStatus": "Road Status",
+  "safeShelters": "Safe Shelters",
+  "emergencyContacts": "Emergency Contacts",
+  "missingFound": "Missing / Found"
+}

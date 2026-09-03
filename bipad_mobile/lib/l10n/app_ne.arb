@@ -1,0 +1,23 @@
+{
+  "@@locale": "ne",
+  "appTitle": "विपद् साथी",
+  "highRiskAlert": "उच्च जोखिम चेतावनी !",
+  "highRiskSub": "तपाईंको क्षेत्रमा बाढीको जोखिम उच्च छ। नजिकको सुरक्षित स्थानमा जानुहोस्।",
+  "viewDetails": "विस्तृत हेर्नुहोस्",
+  "sosButton": "SOS",
+  "sosNeedRescue": "मलाई उद्धार चाहिन्छ",
+  "sosSubtitle": "थिचेपछि तपाईंको जानकारी उद्धार टोलीलाई पठाइनेछ।",
+  "peopleCount": "व्यक्तिहरूको संख्या",
+  "children": "बालबालिका",
+  "elderly": "वृद्ध",
+  "specialNeeds": "विशेष सहयोग आवश्यक",
+  "sendSOS": "SOS पठाउनुहोस्",
+  "iAmSafe": "म सुरक्षित छु",
+  "safeNotificationSent": "तपाईं सुरक्षित रहेको जानकारी परिवारलाई पठाइयो!",
+  "map": "विपद् नक्सा",
+  "reportHazard": "विपद् रिपोर्ट",
+  "roadStatus": "सडक अवस्था",
+  "safeShelters": "सुरक्षित स्थान",
+  "emergencyContacts": "आपत्कालीन सम्पर्क",
+  "missingFound": "हराएको/भेटिएको"
+}
