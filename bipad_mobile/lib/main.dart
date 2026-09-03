@@ -18,10 +18,17 @@ class BipadSathiApp extends StatefulWidget {
 
 class _BipadSathiAppState extends State<BipadSathiApp> {
   Locale _locale = const Locale('ne');
+  bool _showSplash = true;
 
   void _toggleLanguage(String langCode) {
     setState(() {
       _locale = Locale(langCode);
+    });
+  }
+
+  void _finishSplash() {
+    setState(() {
+      _showSplash = false;
     });
   }
 
@@ -45,10 +52,15 @@ class _BipadSathiAppState extends State<BipadSathiApp> {
           color: Colors.white,
         ),
       ),
-      home: SplashScreen(
-        onLanguageChange: _toggleLanguage,
-        currentLocale: _locale,
-      ),
+      home: _showSplash
+          ? SplashScreen(
+              currentLocale: _locale,
+              onFinished: _finishSplash,
+            )
+          : MainNavigationContainer(
+              currentLocale: _locale,
+              onLanguageChange: _toggleLanguage,
+            ),
     );
   }
 }

@@ -1,15 +1,14 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import '../main.dart';
 
 class SplashScreen extends StatefulWidget {
-  final Function(String) onLanguageChange;
   final Locale currentLocale;
+  final VoidCallback onFinished;
 
   const SplashScreen({
     super.key,
-    required this.onLanguageChange,
     required this.currentLocale,
+    required this.onFinished,
   });
 
   @override
@@ -26,10 +25,9 @@ class _SplashScreenState extends State<SplashScreen>
   void initState() {
     super.initState();
 
-    // Scale & Fade Animation Controller
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1200),
+      duration: const Duration(milliseconds: 1000),
     );
 
     _scaleAnimation = Tween<double>(begin: 0.6, end: 1.0).animate(
@@ -42,24 +40,9 @@ class _SplashScreenState extends State<SplashScreen>
 
     _controller.forward();
 
-    // Navigate to Main Screen after 2.2 seconds
-    Timer(const Duration(milliseconds: 2200), () {
+    Timer(const Duration(milliseconds: 1800), () {
       if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          PageRouteBuilder(
-            transitionDuration: const Duration(milliseconds: 600),
-            pageBuilder: (context, animation, secondaryAnimation) =>
-                MainNavigationContainer(
-              onLanguageChange: widget.onLanguageChange,
-              currentLocale: widget.currentLocale,
-            ),
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) {
-              return FadeTransition(opacity: animation, child: child);
-            },
-          ),
-        );
+        widget.onFinished();
       }
     });
   }
@@ -80,8 +63,6 @@ class _SplashScreenState extends State<SplashScreen>
         child: Column(
           children: [
             const Spacer(),
-
-            // Animated Center Logo
             Center(
               child: AnimatedBuilder(
                 animation: _controller,
@@ -97,7 +78,6 @@ class _SplashScreenState extends State<SplashScreen>
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Glowing Rounded Shield Badge
                     Container(
                       width: 100,
                       height: 100,
@@ -121,10 +101,7 @@ class _SplashScreenState extends State<SplashScreen>
                         ),
                       ),
                     ),
-
                     const SizedBox(height: 22),
-
-                    // App Title
                     Text(
                       isNe ? 'विपद् साथी' : 'BIPAD SATHI',
                       style: const TextStyle(
@@ -134,10 +111,7 @@ class _SplashScreenState extends State<SplashScreen>
                         color: Color(0xFF1E293B),
                       ),
                     ),
-
                     const SizedBox(height: 6),
-
-                    // Subtitle Tagline
                     Text(
                       isNe
                           ? 'तपाईंको सुरक्षा, हाम्रो प्राथमिकता'
@@ -153,10 +127,7 @@ class _SplashScreenState extends State<SplashScreen>
                 ),
               ),
             ),
-
             const Spacer(),
-
-            // Bottom Brand Footnote (like "from Meta")
             FadeTransition(
               opacity: _fadeAnimation,
               child: Padding(
