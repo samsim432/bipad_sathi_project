@@ -4,6 +4,7 @@ import 'road_status_screen.dart';
 import 'shelters_screen.dart';
 import 'directory_screen.dart';
 import 'sos_modal_sheet.dart';
+import 'profile_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   final bool isNe;
@@ -41,6 +42,13 @@ class HomeScreen extends StatelessWidget {
           ],
         ),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.account_circle, color: Color(0xFFD32F2F), size: 26),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (ctx) => ProfileScreen(isNe: isNe)),
+            ),
+          ),
           TextButton.icon(
             onPressed: () => onLanguageChange(isNe ? 'en' : 'ne'),
             icon: const Icon(Icons.translate, size: 16, color: Colors.blue),
@@ -49,14 +57,8 @@ class HomeScreen extends StatelessWidget {
               style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue),
             ),
           ),
-          IconButton(
-            icon: const Icon(Icons.phone_in_talk, color: Colors.teal),
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (ctx) => DirectoryScreen(isNe: isNe)),
-            ),
-          )
         ],
+
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
