@@ -5,6 +5,12 @@ import 'shelters_screen.dart';
 import 'directory_screen.dart';
 import 'sos_modal_sheet.dart';
 import 'profile_screen.dart';
+import 'first_aid_screen.dart';
+import 'blood_network_screen.dart';
+import 'river_alerts_screen.dart';
+import 'emergency_siren_screen.dart';
+import 'missing_persons_screen.dart';
+import 'emergency_kit_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   final bool isNe;
@@ -21,6 +27,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0.5,
@@ -58,7 +65,6 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
         ],
-
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -124,15 +130,16 @@ class HomeScreen extends StatelessWidget {
 
             const SizedBox(height: 18),
 
-            // Action Grid
+            // Symmetrical 12-Card Grid (4 Rows x 3 Columns)
             GridView.count(
               crossAxisCount: 3,
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-              childAspectRatio: 0.95,
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
+              childAspectRatio: 0.90,
               children: [
+                // Row 1
                 _buildCard(
                   Icons.map_outlined,
                   isNe ? 'विपद् नक्सा' : 'Disaster Map',
@@ -141,7 +148,7 @@ class HomeScreen extends StatelessWidget {
                 ),
                 _buildCard(
                   Icons.sos,
-                  isNe ? 'उद्धार माग्नुहोस्' : 'Get SOS Aid',
+                  isNe ? 'उद्धार (SOS)' : 'Get SOS Aid',
                   Colors.red.shade700,
                   onTap: () => _openSOSModal(context, isNe),
                 ),
@@ -154,6 +161,8 @@ class HomeScreen extends StatelessWidget {
                     MaterialPageRoute(builder: (ctx) => ReportHazardScreen(isNe: isNe)),
                   ),
                 ),
+
+                // Row 2
                 _buildCard(
                   Icons.alt_route_rounded,
                   isNe ? 'सडक अवस्था' : 'Road Status',
@@ -164,18 +173,76 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
                 _buildCard(
+                  Icons.medical_services_outlined,
+                  isNe ? 'प्राथमिक उपचार' : 'First Aid Guide',
+                  Colors.teal.shade700,
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (ctx) => FirstAidScreen(isNe: isNe)),
+                  ),
+                ),
+                _buildCard(
+                  Icons.bloodtype_outlined,
+                  isNe ? 'रक्तदान नेटवर्क' : 'Blood Network',
+                  Colors.pink.shade700,
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (ctx) => BloodNetworkScreen(isNe: isNe)),
+                  ),
+                ),
+
+                // Row 3
+                _buildCard(
+                  Icons.water_rounded,
+                  isNe ? 'नदी जलसतह' : 'River Radar',
+                  Colors.blue.shade700,
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (ctx) => RiverAlertsScreen(isNe: isNe)),
+                  ),
+                ),
+                _buildCard(
+                  Icons.ring_volume_rounded,
+                  isNe ? 'साइरन / बिकन' : 'SOS Siren',
+                  Colors.deepOrange.shade700,
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (ctx) => EmergencySirenScreen(isNe: isNe)),
+                  ),
+                ),
+                _buildCard(
                   Icons.home_work_outlined,
                   isNe ? 'सुरक्षित स्थान' : 'Safe Shelters',
-                  Colors.blue.shade700,
+                  Colors.purple.shade700,
                   onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(builder: (ctx) => SheltersScreen(isNe: isNe)),
                   ),
                 ),
+
+                // Row 4 (Symmetrical completion)
+                _buildCard(
+                  Icons.person_search_rounded,
+                  isNe ? 'खोजतलास' : 'Missing Persons',
+                  const Color(0xFF0284C7),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (ctx) => MissingPersonsScreen(isNe: isNe)),
+                  ),
+                ),
+                _buildCard(
+                  Icons.backpack_outlined,
+                  isNe ? 'आपत्कालीन झोला' : 'Go-Bag Kit',
+                  const Color(0xFF059669),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (ctx) => EmergencyKitScreen(isNe: isNe)),
+                  ),
+                ),
                 _buildCard(
                   Icons.contact_phone_outlined,
                   isNe ? 'सम्पर्क निर्देशिका' : 'Directory',
-                  Colors.teal.shade700,
+                  Colors.teal.shade800,
                   onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(builder: (ctx) => DirectoryScreen(isNe: isNe)),
@@ -266,14 +333,14 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 30, color: color),
+            Icon(icon, size: 28, color: color),
             const SizedBox(height: 6),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4),
               child: Text(
                 label,
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.black87),
+                style: const TextStyle(fontSize: 10.5, fontWeight: FontWeight.bold, color: Colors.black87),
               ),
             ),
           ],
