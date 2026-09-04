@@ -27,15 +27,26 @@
     <key>LSRequiresIPhoneOS</key>
     <true/>
 
-    <!-- Location & Media Permissions for SOS & Maps -->
+    <!-- Location Permissions for GPS & Emergency Live Maps -->
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>Bipad Sathi requires your location to display disaster maps and dispatch emergency SOS coordinates to rescue teams.</string>
     <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
     <string>Bipad Sathi requires your location to alert you of incoming floods and landslides in your area.</string>
+    <key>NSLocationAlwaysUsageDescription</key>
+    <string>Bipad Sathi requires continuous background location access for emergency perimeter safety alerts.</string>
+
+    <!-- Media Permissions for Hazard Reporting -->
     <key>NSPhotoLibraryUsageDescription</key>
     <string>Bipad Sathi needs photo access so you can upload images of disaster hazards.</string>
     <key>NSCameraUsageDescription</key>
     <string>Bipad Sathi needs camera access to capture incident photos.</string>
+
+    <!-- Network Configuration for Map Tile Providers -->
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <true/>
+    </dict>
 
     <key>UIApplicationSceneManifest</key>
     <dict>
