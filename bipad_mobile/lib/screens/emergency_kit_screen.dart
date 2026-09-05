@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class EmergencyKitScreen extends StatefulWidget {
   final bool isNe;
@@ -9,161 +10,230 @@ class EmergencyKitScreen extends StatefulWidget {
 }
 
 class _EmergencyKitScreenState extends State<EmergencyKitScreen> {
-  final List<Map<String, dynamic>> _checklist = [
+  final Map<String, bool> _items = {};
+  bool _isLoading = true;
+
+  final List<Map<String, dynamic>> _kitCategories = [
     {
-      'title_en': 'Drinking Water (3-5 Liters)',
-      'title_ne': 'पिउने पानी (३-५ लिटर)',
-      'desc_en': 'Sealed bottled water or chlorine purification tablets.',
-      'desc_ne': 'सिलबन्दी बोतल वा पानी शुद्धीकरण गर्ने क्लोरिन चक्की।',
-      'checked': false,
+      'category': 'Water & Nutrition (पानी र खाना)',
+      'icon': Icons.water_drop_rounded,
+      'color': Color(0xFF0284C7),
+      'items': [
+        {'id': 'water', 'titleNe': 'प्रति व्यक्ति ३ लिटर पानी (Water 3L/person)', 'desc': 'कमसेकम ३ दिनको लागि पिउने पानी'},
+        {'id': 'purification', 'titleNe': 'पानी शुद्धीकरण ट्याबलेट वा पियुष (Purification)', 'desc': 'बाढी वा फोहोर पानी शुद्ध बनाउन'},
+        {'id': 'dry_food', 'titleNe': 'सुख्खा खानेकुरा (Dry Rations)', 'desc': 'चिउरा, बिस्कुट, दालमोट, चना, इनर्जी बार'},
+      ],
     },
     {
-      'title_en': 'Dry Foods & Energy Bars',
-      'title_ne': 'सुख्खा खानेकुरा (चिउरा, दालमोठ, बिस्कुट)',
-      'desc_en': 'Non-perishable food that requires no cooking.',
-      'desc_ne': 'नबिग्रिने र पकाउनु नपर्ने पौष्टिक खानेकुरा।',
-      'checked': false,
+      'category': 'Medical & First Aid (औषधि र प्राथमिक उपचार)',
+      'icon': Icons.medical_services_rounded,
+      'color': Color(0xFFDC2626),
+      'items': [
+        {'id': 'first_aid', 'titleNe': 'प्राथमिक उपचार किट (First Aid Box)', 'desc': 'ब्यान्डेज, डिटोल, कटन, सिटामोल, ओआरएस (जीवनजल)'},
+        {'id': 'personal_meds', 'titleNe': 'नियमित खाने औषधि (Prescription Meds)', 'desc': 'सुगर, प्रेसर वा दमका बिरामीका लागि कम्तीमा ७ दिनको औषधि'},
+        {'id': 'sanitary', 'titleNe': 'सरसफाइ सामग्री (Sanitary Kit)', 'desc': 'प्याड, साबुन, स्यानिटाइजर र मास्क'},
+      ],
     },
     {
-      'title_en': 'Flashlight & Extra Batteries',
-      'title_ne': 'टर्चलाइट र थप ब्याट्रीहरू',
-      'desc_en': 'High-lumen LED flashlight or solar torch.',
-      'desc_ne': 'उज्यालो दिने टर्च वा सौर्य ऊर्जाबाट चल्ने बत्ती।',
-      'checked': false,
+      'category': 'Tools, Light & Power (उपकरण तथा बत्ती)',
+      'icon': Icons.flashlight_on_rounded,
+      'color': Color(0xFFD97706),
+      'items': [
+        {'id': 'torch', 'titleNe': 'टर्चलाइट र थप ब्याट्री (Flashlight)', 'desc': 'राति हिँड्न तथा उद्धार संकेत गर्न'},
+        {'id': 'powerbank', 'titleNe': 'फुल चार्ज भएको पावर बैंक (Power Bank)', 'desc': 'मोबाइल चार्ज गर्न र सम्पर्कमा रहन'},
+        {'id': 'whistle', 'titleNe': 'सिठ्ठी (Rescue Whistle)', 'desc': 'पहिरो वा भग्नावशेषमा थुनिएमा आवाज निकाल्न'},
+        {'id': 'lighter', 'titleNe': 'सलाई वा लाइटर (Lighter/Matches)', 'desc': 'पानी नपस्ने प्लाष्टिकमा सुरक्षित राखिएको'},
+      ],
     },
     {
-      'title_en': 'First Aid Kit & Essential Medicines',
-      'title_ne': 'प्राथमिक उपचार बक्स र नियमित औषधि',
-      'desc_en': 'Bandages, antiseptic liquid, paracetamol, chronic meds.',
-      'desc_ne': 'ब्यान्डेज, डेटोल, सिटामोल र नियमित सेवन गर्ने औषधि।',
-      'checked': false,
-    },
-    {
-      'title_en': 'Power Bank & Charging Cables',
-      'title_ne': 'पावर बैंक र चार्जिङ केबल',
-      'desc_en': 'Fully charged 10,000mAh+ emergency power bank.',
-      'desc_ne': 'पूर्ण चार्ज गरिएको आपत्कालीन पावर बैंक।',
-      'checked': false,
-    },
-    {
-      'title_en': 'Important Documents in Waterproof Pouch',
-      'title_ne': 'महत्वपूर्ण कागजात (नागरिकता, जग्गाधनी पुर्जा)',
-      'desc_en': 'Citizenship, passport, land ownership, insurance papers.',
-      'desc_ne': 'नागरिकता, राहदानी, बिमा तथा बैंकिङ कागजपत्रहरू।',
-      'checked': false,
-    },
-    {
-      'title_en': 'Whistle (Emergency Acoustic Signal)',
-      'title_ne': 'ह्विसल (सिठी - उद्धार संकेतको लागि)',
-      'desc_en': 'Helps rescuers locate you under debris without shouting.',
-      'desc_ne': 'भग्नावशेषमा थुनिएमा उद्धारकर्तालाई संकेत पठाउन।',
-      'checked': false,
-    },
-    {
-      'title_en': 'Warm Blanket & Rain Poncho',
-      'title_ne': 'न्यानो कपडा, कम्बल र रेनकोट',
-      'desc_en': 'Protection against cold, hypothermia, and heavy rains.',
-      'desc_ne': 'चिसो, हावाहुरी र पानीबाट बच्न आवश्यक कपडा।',
-      'checked': false,
+      'category': 'Documents & Cash (कागजात र नगद)',
+      'icon': Icons.folder_shared_rounded,
+      'color': Color(0xFF16A34A),
+      'items': [
+        {'id': 'docs', 'titleNe': 'महत्वपूर्ण कागजातको प्रतिलिपि (Documents)', 'desc': 'नागरिकता, लालपुर्जा, पासपोर्ट, जन्मदर्ता प्लाष्टिक झोलामा'},
+        {'id': 'cash', 'titleNe': 'केही आकस्मिक नगद रुपैयाँ (Cash in Small Notes)', 'desc': 'एटीएम/अनलाइन नचल्दा आवश्यक पर्ने खुद्रा पैसा'},
+      ],
     },
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _loadChecklistState();
+  }
+
+  Future<void> _loadChecklistState() async {
+    final prefs = await SharedPreferences.getInstance();
+    for (var cat in _kitCategories) {
+      for (var item in cat['items']) {
+        final id = item['id'] as String;
+        _items[id] = prefs.getBool('gobag_$id') ?? false;
+      }
+    }
+    setState(() => _isLoading = false);
+  }
+
+  Future<void> _toggleItem(String id, bool value) async {
+    setState(() => _items[id] = value);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('gobag_$id', value);
+  }
+
+  double get _readinessScore {
+    if (_items.isEmpty) return 0.0;
+    int checked = _items.values.where((v) => v).length;
+    return checked / _items.length;
+  }
+
+  @override
   Widget build(BuildContext context) {
     final isNe = widget.isNe;
-    final completedCount = _checklist.where((i) => i['checked'] == true).length;
-    final double progress = _checklist.isEmpty ? 0 : completedCount / _checklist.length;
+    final progress = _readinessScore;
+    final percentage = (progress * 100).toInt();
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
         title: Text(
-          isNe ? 'आपत्कालीन झोला (Go-Bag)' : 'Emergency Go-Bag',
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
+          isNe ? 'आकस्मिक झोला (७२ घण्टा तयारी)' : '72-Hour Emergency Go-Bag',
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
         ),
         backgroundColor: Colors.white,
-        foregroundColor: const Color(0xFF0F172A),
         elevation: 0.5,
+        foregroundColor: const Color(0xFF0F172A),
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          // Progress Overview Card
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xFFE2E8F0)),
-              boxShadow: const [BoxShadow(color: Color(0x05000000), blurRadius: 6, offset: Offset(0, 2))],
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : ListView(
+              padding: const EdgeInsets.all(16),
+              children: [
+                // 1. Readiness Score Card
+                _buildScoreCard(percentage, progress, isNe),
+                const SizedBox(height: 18),
+
+                // 2. Category Blocks
+                ..._kitCategories.map((cat) => _buildCategorySection(cat, isNe)),
+              ],
             ),
+    );
+  }
+
+  Widget _buildScoreCard(int percentage, double progress, bool isNe) {
+    Color scoreColor = percentage >= 80
+        ? const Color(0xFF16A34A)
+        : (percentage >= 40 ? const Color(0xFFD97706) : const Color(0xFFDC2626));
+
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: const Color(0xFF0F172A),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 10, offset: Offset(0, 4))],
+      ),
+      child: Row(
+        children: [
+          // Circular Progress Chart
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              SizedBox(
+                width: 70,
+                height: 70,
+                child: CircularProgressIndicator(
+                  value: progress,
+                  strokeWidth: 7,
+                  backgroundColor: Colors.white12,
+                  valueColor: AlwaysStoppedAnimation<Color>(scoreColor),
+                ),
+              ),
+              Text(
+                '$percentage%',
+                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+            ],
+          ),
+          const SizedBox(width: 16),
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      isNe ? 'तपाईंको तयारी प्रगति' : 'Readiness Progress',
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Color(0xFF0F172A)),
-                    ),
-                    Text(
-                      '$completedCount / ${_checklist.length}',
-                      style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF059669)),
-                    ),
-                  ],
+                Text(
+                  isNe ? 'विपद् पूर्वतयारी स्कोर' : 'Disaster Readiness Level',
+                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
                 ),
-                const SizedBox(height: 10),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(6),
-                  child: LinearProgressIndicator(
-                    value: progress,
-                    minHeight: 8,
-                    backgroundColor: const Color(0xFFE2E8F0),
-                    valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF059669)),
+                const SizedBox(height: 4),
+                Text(
+                  percentage >= 80
+                      ? (isNe ? 'उत्कृष्ट! तपाईंको ७२ घण्टे झोला तयार छ।' : 'Ready for immediate evacuation.')
+                      : (isNe ? 'बाँकी आवश्यक सामग्रीहरू थप गरी सुरक्षित रहनुहोस्।' : 'Add missing essentials to reach 100%.'),
+                  style: const TextStyle(color: Color(0xFF94A3B8), fontSize: 11, height: 1.3),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCategorySection(Map<String, dynamic> cat, bool isNe) {
+    final List items = cat['items'];
+    final Color catColor = cat['color'];
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFE2E8F0)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 14, 16, 8),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: catColor.withOpacity(0.12),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(cat['icon'], color: catColor, size: 18),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    cat['category'],
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Color(0xFF0F172A)),
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 16),
+          const Divider(height: 1, color: Color(0xFFF1F5F9)),
+          ...items.map((item) {
+            final id = item['id'] as String;
+            final isChecked = _items[id] ?? false;
 
-          // Checklist Items
-          ..._checklist.asMap().entries.map((entry) {
-            final idx = entry.key;
-            final item = entry.value;
-            final title = isNe ? item['title_ne'] : item['title_en'];
-            final desc = isNe ? item['desc_ne'] : item['desc_en'];
-
-            return Container(
-              margin: const EdgeInsets.only(bottom: 10),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(
-                  color: item['checked'] ? const Color(0xFF86EFAC) : const Color(0xFFE2E8F0),
+            return CheckboxListTile(
+              dense: true,
+              activeColor: const Color(0xFF0F172A),
+              value: isChecked,
+              onChanged: (val) => _toggleItem(id, val ?? false),
+              title: Text(
+                item['titleNe'],
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  decoration: isChecked ? TextDecoration.lineThrough : null,
+                  color: isChecked ? const Color(0xFF94A3B8) : const Color(0xFF1E293B),
                 ),
               ),
-              child: CheckboxListTile(
-                value: item['checked'],
-                activeColor: const Color(0xFF059669),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                title: Text(
-                  title,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13.5,
-                    decoration: item['checked'] ? TextDecoration.lineThrough : null,
-                    color: item['checked'] ? const Color(0xFF64748B) : const Color(0xFF0F172A),
-                  ),
-                ),
-                subtitle: Text(
-                  desc,
-                  style: const TextStyle(fontSize: 11.5, color: Color(0xFF64748B)),
-                ),
-                onChanged: (val) {
-                  setState(() => _checklist[idx]['checked'] = val ?? false);
-                },
+              subtitle: Text(
+                item['desc'],
+                style: const TextStyle(fontSize: 11, color: Color(0xFF64748B)),
               ),
             );
           }),

@@ -1,79 +1,112 @@
 import 'package:flutter/material.dart';
 
-class AlertsFeedScreen extends StatelessWidget {
+// Alias so both AlertsScreen and AlertsFeedScreen work seamlessly
+typedef AlertsFeedScreen = AlertsScreen;
+
+class AlertsScreen extends StatelessWidget {
   final bool isNe;
-  const AlertsFeedScreen({super.key, required this.isNe});
+  const AlertsScreen({super.key, this.isNe = true});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
-        title: Text(isNe ? 'विपद् पूर्वसूचना' : 'Active Alerts & Bulletins'),
+        title: Text(
+          isNe ? 'आपत्कालीन पूर्वसूचना तथा अलर्ट' : 'Early Warning Alerts',
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        ),
         backgroundColor: Colors.white,
         elevation: 0.5,
+        foregroundColor: const Color(0xFF0F172A),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           _buildAlertCard(
-            Icons.water_drop,
-            isNe ? 'नारायणी नदी: उच्च खतरा तह पार' : 'Narayani River: Danger Level Exceeded',
-            isNe ? 'चितवन, नवलपरासी • १० मिनेट अघि' : 'Chitwan, Nawalparasi • 10m ago',
-            isNe
-                ? 'बाढी पूर्वानुमान महाशाखा अनुसार जलसतह १०.५ मिटर नाघेको छ। तटीय क्षेत्र तुरुन्त खाली गर्नुहोस्।'
-                : 'Department of Hydrology reports water level > 10.5m. Evacuate low-lying riverbanks immediately.',
-            Colors.red,
+            title: isNe ? 'उच्च बाढी चेतावनी (Devghat Gauge)' : 'Severe Flood Warning (Devghat)',
+            desc: isNe
+                ? 'नारायणी नदीमा जलसतह खतराको रेखा पार गरेको छ। सुरक्षित स्थानमा रहनुहोला।'
+                : 'Narayani river level has crossed danger thresholds. Move to safe high ground.',
+            severity: 'CRITICAL',
+            time: '१० मिनेट अघि',
+            color: const Color(0xFFDC2626),
+            icon: Icons.water_damage_rounded,
           ),
+          const SizedBox(height: 12),
           _buildAlertCard(
-            Icons.landslide,
-            isNe ? 'पृथ्वी राजमार्ग: लेदो सहितको पहिरो' : 'Prithvi Highway: Debris Flow',
-            isNe ? 'धादिङ, गजुरी • ३५ मिनेट अघि' : 'Dhading, Gajuri • 35m ago',
-            isNe
-                ? 'पहिरोका कारण दुईतर्फी सवारी आवागमन ठप्प भएको छ। वैकल्पिक मार्ग प्रयोग गर्नुहोस्।'
-                : 'Both-way traffic halted due to massive debris flow. Road clearance under progress.',
-            Colors.orange,
+            title: isNe ? 'पहिरो जोखिम (Prithvi Highway)' : 'Landslide Alert (Prithvi Highway)',
+            desc: isNe
+                ? 'मुग्लिन-मलेखु खण्डमा ठूलो पहिरोका कारण बाटो अवरुद्ध छ।'
+                : 'Mugling-Malekhu highway section blocked due to massive landslide.',
+            severity: 'HIGH',
+            time: '२५ मिनेट अघि',
+            color: const Color(0xFFEA580C),
+            icon: Icons.landslide_rounded,
           ),
+          const SizedBox(height: 12),
           _buildAlertCard(
-            Icons.storm,
-            isNe ? 'भारी वर्षा तथा हुरीबतास चेतावनी' : 'Heavy Rainfall & Storm Watch',
-            isNe ? 'कोशी र मधेश प्रदेश • २ घण्टा अघि' : 'Koshi & Madhesh Province • 2h ago',
-            isNe
-                ? 'आगामी २४ घण्टामा भारी वर्षाको सम्भावना रहेकोले सतर्क रहन अनुरोध गरिन्छ।'
-                : 'High precipitation expected over the next 24 hours. Keep emergency kit ready.',
-            Colors.blue,
+            title: isNe ? 'मौसम पूर्वानुमान (Heavy Rainfall)' : 'Heavy Rainfall Advisory',
+            desc: isNe
+                ? 'बागमती र गण्डकी प्रदेशमा आगामी २४ घण्टा भारी वर्षाको सम्भावना।'
+                : 'Heavy to very heavy rainfall expected across Bagmati & Gandaki provinces.',
+            severity: 'ADVISORY',
+            time: '१ घण्टा अघि',
+            color: const Color(0xFF0284C7),
+            icon: Icons.thunderstorm_rounded,
           ),
         ],
       ),
     );
   }
 
-  Widget _buildAlertCard(IconData icon, String title, String meta, String desc, Color color) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 14),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
+  Widget _buildAlertCard({
+    required String title,
+    required String desc,
+    required String severity,
+    required String time,
+    required Color color,
+    required IconData icon,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFE2E8F0)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(color: color.withOpacity(0.12), borderRadius: BorderRadius.circular(12)),
+            child: Icon(icon, color: color, size: 22),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CircleAvatar(backgroundColor: color.withOpacity(0.15), child: Icon(icon, color: color)),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-                      Text(meta, style: const TextStyle(fontSize: 12, color: Colors.grey)),
-                    ],
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(color: color.withOpacity(0.15), borderRadius: BorderRadius.circular(6)),
+                      child: Text(severity, style: TextStyle(color: color, fontSize: 9, fontWeight: FontWeight.bold)),
+                    ),
+                    Text(time, style: const TextStyle(fontSize: 10, color: Color(0xFF94A3B8))),
+                  ],
                 ),
+                const SizedBox(height: 6),
+                Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Color(0xFF0F172A))),
+                const SizedBox(height: 4),
+                Text(desc, style: const TextStyle(fontSize: 11, color: Color(0xFF475569), height: 1.3)),
               ],
             ),
-            const SizedBox(height: 10),
-            Text(desc, style: const TextStyle(fontSize: 13, height: 1.35)),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

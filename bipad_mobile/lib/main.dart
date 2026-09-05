@@ -7,6 +7,7 @@ import 'screens/missing_persons_screen.dart';
 import 'screens/sos_modal_sheet.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const BipadSathiApp());
 }
 
@@ -41,11 +42,11 @@ class _BipadSathiAppState extends State<BipadSathiApp> {
       locale: _locale,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFFD32F2F),
-          primary: const Color(0xFFD32F2F),
-          secondary: const Color(0xFF1976D2),
+          seedColor: const Color(0xFFDC2626),
+          primary: const Color(0xFFDC2626),
+          secondary: const Color(0xFF2563EB),
         ),
-        scaffoldBackgroundColor: const Color(0xFFF7F9FC),
+        scaffoldBackgroundColor: const Color(0xFFF8FAFC),
         useMaterial3: true,
         cardTheme: CardThemeData(
           elevation: 0.5,
@@ -87,9 +88,7 @@ class _MainNavigationContainerState extends State<MainNavigationContainer> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
+      backgroundColor: Colors.transparent,
       builder: (ctx) => const SOSModalSheet(),
     );
   }
@@ -105,7 +104,7 @@ class _MainNavigationContainerState extends State<MainNavigationContainer> {
         onNavigate: (index) => setState(() => _currentIndex = index),
       ),
       DisasterMapScreen(isNe: isNe),
-      AlertsFeedScreen(isNe: isNe),
+      AlertsScreen(isNe: isNe),
       MissingPersonsScreen(isNe: isNe),
     ];
 
@@ -138,28 +137,28 @@ class _MainNavigationContainerState extends State<MainNavigationContainer> {
                   isSelected: _currentIndex == 0,
                   onTap: () => setState(() => _currentIndex = 0),
                 ),
-                // 2. Map
+                // 2. Radar Map
                 _buildNavItem(
                   icon: Icons.map_rounded,
-                  label: isNe ? 'नक्सा' : 'Map',
+                  label: isNe ? 'नक्सा' : 'Radar',
                   isSelected: _currentIndex == 1,
                   onTap: () => setState(() => _currentIndex = 1),
                 ),
-                // 3. Center SOS Button
+                // 3. Central Animated SOS
                 GestureDetector(
                   onTap: _openSOSModal,
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
-                        colors: [Color(0xFFE53935), Color(0xFFC62828)],
+                        colors: [Color(0xFFDC2626), Color(0xFFB91C1C)],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
                       borderRadius: BorderRadius.circular(24),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFFD32F2F).withOpacity(0.4),
+                          color: const Color(0xFFDC2626).withOpacity(0.35),
                           blurRadius: 8,
                           offset: const Offset(0, 3),
                         ),
@@ -168,7 +167,7 @@ class _MainNavigationContainerState extends State<MainNavigationContainer> {
                     child: const Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.emergency, color: Colors.white, size: 20),
+                        Icon(Icons.emergency_rounded, color: Colors.white, size: 20),
                         SizedBox(width: 5),
                         Text(
                           'SOS',
@@ -192,8 +191,8 @@ class _MainNavigationContainerState extends State<MainNavigationContainer> {
                 ),
                 // 5. Missing
                 _buildNavItem(
-                  icon: Icons.people_alt_rounded,
-                  label: isNe ? 'खोजतलास' : 'Missing',
+                  icon: Icons.person_search_rounded,
+                  label: isNe ? 'खोजतलास' : 'Tracing',
                   isSelected: _currentIndex == 3,
                   onTap: () => setState(() => _currentIndex = 3),
                 ),
@@ -222,7 +221,7 @@ class _MainNavigationContainerState extends State<MainNavigationContainer> {
             Icon(
               icon,
               size: 24,
-              color: isSelected ? const Color(0xFFD32F2F) : Colors.grey.shade600,
+              color: isSelected ? const Color(0xFFDC2626) : const Color(0xFF64748B),
             ),
             const SizedBox(height: 3),
             Text(
@@ -230,7 +229,7 @@ class _MainNavigationContainerState extends State<MainNavigationContainer> {
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                color: isSelected ? const Color(0xFFD32F2F) : Colors.grey.shade700,
+                color: isSelected ? const Color(0xFFDC2626) : const Color(0xFF64748B),
               ),
             ),
           ],

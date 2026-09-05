@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class FirstAidScreen extends StatefulWidget {
   final bool isNe;
@@ -8,201 +10,346 @@ class FirstAidScreen extends StatefulWidget {
   State<FirstAidScreen> createState() => _FirstAidScreenState();
 }
 
-class _FirstAidScreenState extends State<FirstAidScreen> {
-  String _selectedCategory = 'ALL';
+class _FirstAidScreenState extends State<FirstAidScreen> with TickerProviderStateMixin {
+  String _selectedCategory = 'CRITICAL';
 
-  final List<Map<String, dynamic>> _guides = [
-    {
-      'id': 'cpr',
-      'title_en': 'CPR (Cardiopulmonary Resuscitation)',
-      'title_ne': 'सीपीआर (हृदय गति पुनः सुचारु)',
-      'category': 'LIFE_SAVING',
-      'icon': Icons.favorite_rounded,
-      'color': Color(0xFFDC2626),
-      'steps_en': [
-        '1. Check responsiveness & pulse.',
-        '2. Place hands centered on chest.',
-        '3. Push hard & fast (100–120 beats per minute, 2 inches deep).',
-        '4. Deliver 2 rescue breaths after every 30 compressions if trained.'
-      ],
-      'steps_ne': [
-        '१. बिरामीको होस र नाडी जाँच गर्नुहोस्।',
-        '२. छातीको बीच भागमा दुवै हात राख्नुहोस्।',
-        '३. प्रति मिनेट १००–१२० पटक २ इन्च गहिरो थिच्नुहोस्।',
-        '४. तालिम प्राप्त भए ३० पटक थिचेपछि २ पटक कृत्रिम सास दिनुहोस्।'
-      ]
-    },
-    {
-      'id': 'bleeding',
-      'title_en': 'Severe Bleeding Control',
-      'title_ne': 'अत्यधिक रक्तस्राव नियन्त्रण',
-      'category': 'TRAUMA',
-      'icon': Icons.water_drop_rounded,
-      'color': Color(0xFFB91C1C),
-      'steps_en': [
-        '1. Apply firm, continuous direct pressure with a clean cloth.',
-        '2. Do NOT remove soaked cloth; add more layers on top.',
-        '3. Elevate the injured limb above heart level if no fracture.',
-        '4. Apply a tourniquet 2-3 inches above wound only if bleeding is life-threatening.'
-      ],
-      'steps_ne': [
-        '१. सफा कपडाले घाउमा लगातार बलियो दबाब दिनुहोस्।',
-        '२. भिजेको कपडा नहटाउनुहोस्, माथिबाट थप कपडा थप्नुहोस्।',
-        '३. हड्डी नभाँचिएको भए चोट लागेको अंग मुटुको सतहभन्दा माथि उठाउनुहोस्।',
-        '४. अत्यधिक रगत बगेमा घाउभन्दा २–३ इन्च माथि कस्नुहोस् (Tourniquet)।'
-      ]
-    },
-    {
-      'id': 'snakebite',
-      'title_en': 'Snakebite Emergency (सर्पदंश)',
-      'title_ne': 'सर्पदंश (सर्पले टोकेमा)',
-      'category': 'ENVIRONMENTAL',
-      'icon': Icons.healing_rounded,
-      'color': Color(0xFF047857),
-      'steps_en': [
-        '1. Keep victim completely calm and still to slow venom spread.',
-        '2. Immobilize the bitten limb with a splint.',
-        '3. DO NOT cut the wound, suck venom, or use tight tourniquets.',
-        '4. Transport immediately to the nearest Anti-Snake Venom (ASV) hospital.'
-      ],
-      'steps_ne': [
-        '१. बिरामीलाई नचलाई शान्त राख्नुहोस् ता कि विष छिटो नफैलिओस्।',
-        '२. टोकेको भागलाई काठ वा कपडाले बाँधेर स्थिर राख्नुहोस्।',
-        '३. घाउ चिर्ने, विष चुस्ने वा कडा बाँध्ने काम नगर्नुहोस्।',
-        '४. तुरुन्तै एन्टिस्नेक भेनम (ASV) उपलब्ध अस्पताल लैजानुहोस्।'
-      ]
-    },
-    {
-      'id': 'fracture',
-      'title_en': 'Bone Fracture & Sprain',
-      'title_ne': 'हड्डी भाँच्चिएमा वा मर्किएमा',
-      'category': 'TRAUMA',
-      'icon': Icons.accessibility_new_rounded,
-      'color': Color(0xFFD97706),
-      'steps_en': [
-        '1. Do not attempt to realign or push protruding bones back.',
-        '2. Immobilize the limb using a splint or rolled cardboard.',
-        '3. Apply cold packs wrapped in cloth (avoid direct ice on skin).',
-        '4. Check pulse and skin temperature below the fracture.'
-      ],
-      'steps_ne': [
-        '१. भाँचिएको हड्डी सोझ्याउने वा भित्र छिराउने प्रयास नगर्नुहोस्।',
-        '२. काठ, बाँस वा गत्ताको सहाराले अङ्गलाई स्थिर पार्नुहोस्।',
-        '३. कपडामा बेरेर बरफले सेक्नुहोस् (सिधै छालामा बरफ नराख्नुहोस्)।',
-        '४. तुरुन्तै नजिकैको स्वास्थ्य चौकी लैजानुहोस्।'
-      ]
-    },
-    {
-      'id': 'burns',
-      'title_en': 'Thermal Burns & Scalds',
-      'title_ne': 'आगोले वा तातोले पोलेमा',
-      'category': 'TRAUMA',
-      'icon': Icons.local_fire_department_rounded,
-      'color': Color(0xFFC2410C),
-      'steps_en': [
-        '1. Cool the burn under gentle running tap water for 15–20 minutes.',
-        '2. Do NOT apply ice, toothpaste, butter, or oil.',
-        '3. Cover loosely with sterile plastic cling wrap or a clean damp cloth.',
-        '4. Do NOT burst any blisters.'
-      ],
-      'steps_ne': [
-        '१. १५ देखि २० मिनेटसम्म धाराको चिसो पानीले पोलेको भाग पखाल्नुहोस्।',
-        '२. मन्जन, घ्यू, तेल वा बरफ नलगाउनुहोस्।',
-        '३. सफा कपडा वा पातलो प्लास्टिकले हल्का छोप्नुहोस्।',
-        '४. उठेको फोका नफुटाउनुहोस्।'
-      ]
-    },
-  ];
+  // CPR Metronome State
+  bool _isCprRunning = false;
+  int _cprCount = 0;
+  int _cycleCount = 1;
+  Timer? _cprTimer;
+  late AnimationController _cprPulseController;
+
+  @override
+  void initState() {
+    super.initState();
+    // 105 Beats Per Minute = ~571ms per beat (AHA Guideline: 100-120 BPM)
+    _cprPulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 571),
+    );
+  }
+
+  @override
+  void dispose() {
+    _cprTimer?.cancel();
+    _cprPulseController.dispose();
+    super.dispose();
+  }
+
+  void _toggleCPR() {
+    if (_isCprRunning) {
+      _cprTimer?.cancel();
+      _cprPulseController.stop();
+      setState(() {
+        _isCprRunning = false;
+        _cprCount = 0;
+        _cycleCount = 1;
+      });
+    } else {
+      setState(() => _isCprRunning = true);
+      _cprPulseController.repeat(reverse: true);
+      _cprTimer = Timer.periodic(const Duration(milliseconds: 571), (timer) {
+        HapticFeedback.heavyImpact();
+        setState(() {
+          _cprCount++;
+          if (_cprCount > 30) {
+            _cprCount = 1;
+            _cycleCount++;
+            HapticFeedback.vibrate();
+          }
+        });
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final isNe = widget.isNe;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
         title: Text(
-          isNe ? 'अग्रिम प्राथमिक उपचार' : 'Offline First Aid Guide',
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
+          isNe ? 'आकस्मिक प्राथमिक उपचार' : 'Emergency First Aid Guide',
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
         ),
         backgroundColor: Colors.white,
-        foregroundColor: const Color(0xFF0F172A),
         elevation: 0.5,
+        foregroundColor: const Color(0xFF0F172A),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: const Color(0xFFECFDF5),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: const Color(0xFFA7F3D0)),
-            ),
-            child: Row(
-              children: [
-                const Icon(Icons.offline_pin_rounded, color: Color(0xFF059669), size: 24),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    isNe
-                        ? 'यो निर्देशिका इन्टरनेट नभएको अवस्थामा पनि १००% काम गर्छ।'
-                        : 'Works 100% offline without cellular or Wi-Fi connectivity.',
-                    style: const TextStyle(color: Color(0xFF065F46), fontSize: 12, fontWeight: FontWeight.w600),
-                  ),
-                )
-              ],
-            ),
-          ),
+          // 1. CPR Interactive Metronome Card
+          _buildCprMetronomeCard(isNe),
+          const SizedBox(height: 20),
+
+          // 2. Category Selector
+          _buildCategoryFilter(isNe),
           const SizedBox(height: 16),
-          ..._guides.map((g) => _buildGuideCard(g, isNe)),
+
+          // 3. Protocol Guides
+          if (_selectedCategory == 'CRITICAL') ...[
+            _buildProtocolCard(
+              title: isNe ? 'सर्पदंश (Snakebite Protocol)' : 'Snakebite Emergency',
+              subtitle: isNe ? 'गोमन / करेत वा अन्य सर्पले टोकेमा तुरुन्त गर्नुपर्ने' : 'Critical steps for venomous bites in Nepal',
+              icon: Icons.healing_rounded,
+              accentColor: const Color(0xFFDC2626),
+              dos: isNe
+                  ? ['बिरामीलाई शान्त राख्ने र हलचल गर्न नदिने', 'टोकेको भागलाई मुटुको सतहभन्दा तल राख्ने', 'तुरुन्त नजिकको एन्टी-भेनम भएको अस्पताल पुर्‍याउने']
+                  : ['Keep patient calm and completely still', 'Immobilize limb below heart level', 'Rush immediately to the nearest Anti-Venom facility'],
+              donts: isNe
+                  ? ['डोरी वा कपडाले कडा गरी नबाँध्ने (No Tourniquet)', 'ब्लेडले चिर्ने वा मुखले विष नचुस्ने', 'कुनै जडीबुटी वा झारफुकमा समय खेर नफाल्ने']
+                  : ['Do NOT tie tight tourniquets', 'Do NOT cut or suck the wound', 'Do NOT delay transport for traditional healers'],
+            ),
+            const SizedBox(height: 14),
+            _buildProtocolCard(
+              title: isNe ? 'गम्भीर रक्तस्राव (Severe Bleeding)' : 'Severe Hemorrhage Control',
+              subtitle: isNe ? 'पहिरो वा चोटपटकबाट अत्यधिक रगत बगेमा' : 'Immediate direct pressure and elevation',
+              icon: Icons.water_drop_rounded,
+              accentColor: const Color(0xFFEA580C),
+              dos: isNe
+                  ? ['सफा कपडाले घाउमा सिधै कडा दबाब दिने', 'रक्तस्राव भएको अंगलाई माथि उठाउने', 'रगत थामिएपछि मात्र ब्यान्डेज बाँध्ने']
+                  : ['Apply direct firm pressure with clean cloth', 'Elevate wounded limb above heart level', 'Apply pressure bandage once bleeding slows'],
+              donts: isNe
+                  ? ['घाउमा टाँसिएको कपडा नहटाउने', 'घाउ भित्र पसेको वस्तु (फलाम/काठ) नझिक्ने']
+                  : ['Do not remove deeply embedded objects', 'Do not clean extensive open wounds with raw water'],
+            ),
+          ] else ...[
+            _buildProtocolCard(
+              title: isNe ? 'हड्डी भाँचिएको (Fractures)' : 'Bone Fractures & Sprains',
+              subtitle: isNe ? 'भूकम्प वा पहिरोमा थिचिएर हड्डी भाँचिएमा' : 'Immobilization and splinting guide',
+              icon: Icons.accessibility_new_rounded,
+              accentColor: const Color(0xFF2563EB),
+              dos: isNe
+                  ? ['भाँचिएको ठाउँलाई काठ वा कार्डबोर्डले स्प्लिन्ट बाँधेर अचल बनाउने', 'सुन्निन कम गर्न बरफ वा चिसो कपडा प्रयोग गर्ने']
+                  : ['Immobilize fracture using rigid splints (wood/cardboard)', 'Keep patient still until stretcher arrives'],
+              donts: isNe
+                  ? ['भाँचिएको हड्डी आफैं सीधा बनाउने प्रयास नगर्ने', 'घाइतेलाई जबर्जस्ती हिँड्न नलगाउने']
+                  : ['Do NOT try to realign broken bones manually', 'Do NOT move injured person without stabilization'],
+            ),
+            const SizedBox(height: 14),
+            _buildProtocolCard(
+              title: isNe ? 'आगोले पोलेको (Burns)' : 'Thermal Burns Protocol',
+              subtitle: isNe ? 'आगो वा तातो पानीले पोलेको प्राथमिक उपचार' : 'Cooling and sterile protection',
+              icon: Icons.local_fire_department_rounded,
+              accentColor: const Color(0xFFD97706),
+              dos: isNe
+                  ? ['पोलेको ठाउँमा १०-१५ मिनेट चिसो पानी बगाउने', 'सफा सुक्खा कपडाले खुकुलो गरी ढाक्ने']
+                  : ['Cool burn with clean running water for 10-15 mins', 'Cover loosely with sterile, clean cloth'],
+              donts: isNe
+                  ? ['बरफ, घिउ वा टुथपेस्ट कहिल्यै नलगाउने', 'पोलेर उठेको फोका नफुटाउने']
+                  : ['Do NOT apply toothpaste, butter, or ice directly', 'Do NOT pop burn blisters'],
+            ),
+          ],
         ],
       ),
     );
   }
 
-  Widget _buildGuideCard(Map<String, dynamic> item, bool isNe) {
-    final steps = isNe ? (item['steps_ne'] as List<String>) : (item['steps_en'] as List<String>);
-    final title = isNe ? item['title_ne'] : item['title_en'];
-
+  Widget _buildCprMetronomeCard(bool isNe) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: const Color(0xFF0F172A),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 10, offset: Offset(0, 4))],
+      ),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(color: const Color(0xFFDC2626), borderRadius: BorderRadius.circular(10)),
+                    child: const Icon(Icons.favorite_rounded, color: Colors.white, size: 20),
+                  ),
+                  const SizedBox(width: 10),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        isNe ? 'सीपीआर रिदम (CPR Guide)' : 'CPR Chest Compression Beat',
+                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
+                      ),
+                      Text(
+                        isNe ? '१०५ कम्प्रेसन प्रति मिनेट' : '105 BPM Audio-Haptic Pulse',
+                        style: const TextStyle(color: Color(0xFF94A3B8), fontSize: 11),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              if (_isCprRunning)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(color: const Color(0xFF16A34A), borderRadius: BorderRadius.circular(12)),
+                  child: Text('Cycle: #$_cycleCount', style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+                ),
+            ],
+          ),
+          const SizedBox(height: 20),
+
+          // Pulsing Metronome Circle
+          ScaleTransition(
+            scale: Tween<double>(begin: 1.0, end: 1.15).animate(
+              CurvedAnimation(parent: _cprPulseController, curve: Curves.easeInOut),
+            ),
+            child: Container(
+              width: 90,
+              height: 90,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: _isCprRunning ? const Color(0xFFDC2626) : const Color(0xFF1E293B),
+                border: Border.all(color: Colors.white24, width: 3),
+              ),
+              child: Center(
+                child: Text(
+                  _isCprRunning ? '$_cprCount' : '30:2',
+                  style: const TextStyle(color: Colors.white, fontSize: 26, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            _isCprRunning
+                ? (_cprCount >= 30 ? (isNe ? '२ पटक श्वास दिनुहोस् (Give 2 Breaths)' : 'Give 2 Rescue Breaths!') : (isNe ? 'छातीमा दबाब दिनुहोस् (Push Hard & Fast)' : 'Push hard & fast on center of chest'))
+                : (isNe ? '३० पटक दबाब र २ पटक श्वासको चक्र' : '30 Compressions then 2 Breaths'),
+            style: TextStyle(
+              color: _isCprRunning && _cprCount >= 30 ? const Color(0xFFFBBF24) : Colors.white70,
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // Start/Stop Button
+          FilledButton.icon(
+            style: FilledButton.styleFrom(
+              backgroundColor: _isCprRunning ? const Color(0xFFEF4444) : const Color(0xFF2563EB),
+              minimumSize: const Size(double.infinity, 44),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+            icon: Icon(_isCprRunning ? Icons.stop_rounded : Icons.play_arrow_rounded),
+            label: Text(
+              _isCprRunning ? (isNe ? 'रोक्नुहोस् (STOP)' : 'STOP METRONOME') : (isNe ? 'सीपीआर सुरु गर्नुहोस् (START)' : 'START CPR METRONOME'),
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            onPressed: _toggleCPR,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCategoryFilter(bool isNe) {
+    return Row(
+      children: [
+        _buildTabBtn('CRITICAL', isNe ? 'तत्काल ज्यान जोखिम (Critical)' : 'Life Threatening'),
+        const SizedBox(width: 8),
+        _buildTabBtn('TRAUMA', isNe ? 'चोटपटक तथा दुर्घटना' : 'Trauma & Burns'),
+      ],
+    );
+  }
+
+  Widget _buildTabBtn(String id, String label) {
+    final sel = _selectedCategory == id;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => setState(() => _selectedCategory = id),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          decoration: BoxDecoration(
+            color: sel ? const Color(0xFF0F172A) : Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: sel ? Colors.transparent : const Color(0xFFE2E8F0)),
+          ),
+          alignment: Alignment.center,
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: sel ? Colors.white : const Color(0xFF64748B),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProtocolCard({
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required Color accentColor,
+    required List<String> dos,
+    required List<String> donts,
+  }) {
+    return Container(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: const Color(0xFFE2E8F0)),
-        boxShadow: const [BoxShadow(color: Color(0x05000000), blurRadius: 6, offset: Offset(0, 2))],
       ),
       child: ExpansionTile(
-        tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        initiallyExpanded: true,
         leading: Container(
           padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: (item['color'] as Color).withOpacity(0.12),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Icon(item['icon'], color: item['color'], size: 24),
+          decoration: BoxDecoration(color: accentColor.withOpacity(0.12), borderRadius: BorderRadius.circular(10)),
+          child: Icon(icon, color: accentColor, size: 22),
         ),
-        title: Text(
-          title,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Color(0xFF0F172A)),
-        ),
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Color(0xFF0F172A))),
+        subtitle: Text(subtitle, style: const TextStyle(fontSize: 11, color: Color(0xFF64748B))),
         childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-        children: steps.map((s) => Padding(
-          padding: const EdgeInsets.only(bottom: 6),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Divider(height: 1),
+          const SizedBox(height: 12),
+          // DOs
+          const Row(
             children: [
-              const Icon(Icons.arrow_right_rounded, color: Color(0xFF2563EB), size: 20),
-              const SizedBox(width: 4),
-              Expanded(
-                child: Text(
-                  s,
-                  style: const TextStyle(fontSize: 13, color: Color(0xFF334155), height: 1.35),
-                ),
-              ),
+              Icon(Icons.check_circle_outline_rounded, color: Color(0xFF16A34A), size: 16),
+              SizedBox(width: 6),
+              Text('के गर्ने (DOs)', style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF16A34A), fontSize: 12)),
             ],
           ),
-        )).toList(),
+          const SizedBox(height: 6),
+          ...dos.map((d) => Padding(
+                padding: const EdgeInsets.only(bottom: 4, left: 22),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('• ', style: TextStyle(fontWeight: FontWeight.bold)),
+                    Expanded(child: Text(d, style: const TextStyle(fontSize: 12, color: Color(0xFF334155)))),
+                  ],
+                ),
+              )),
+          const SizedBox(height: 10),
+          // DONTs
+          const Row(
+            children: [
+              Icon(Icons.cancel_outlined, color: Color(0xFFDC2626), size: 16),
+              SizedBox(width: 6),
+              Text('के नगर्ने (DON\'Ts)', style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFFDC2626), fontSize: 12)),
+            ],
+          ),
+          const SizedBox(height: 6),
+          ...donts.map((d) => Padding(
+                padding: const EdgeInsets.only(bottom: 4, left: 22),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('• ', style: TextStyle(fontWeight: FontWeight.bold)),
+                    Expanded(child: Text(d, style: const TextStyle(fontSize: 12, color: Color(0xFF334155)))),
+                  ],
+                ),
+              )),
+        ],
       ),
     );
   }
